@@ -138,7 +138,7 @@ export default function DocsTools() {
     "Conversion": [
       { id: "pdf-in", label: "PDF → Document (paste text)", icon: "file-pdf-box", run: () => setAiPromptOpen({ title: "Paste PDF text extract", onSubmit: (p) => preview("From PDF", p, () => replaceAll(p)) })},
       { id: "img-ocr", label: "Image → Text (paste OCR)", icon: "image-text", run: () => setAiPromptOpen({ title: "Paste OCR text from image", onSubmit: (p) => preview("From Image", p, () => replaceAll(p)) })},
-      { id: "to-sheet", label: "Document → Sheet", icon: "google-spreadsheet", run: async () => {
+      { id: "to-sheet", label: "Document → Sheet", icon: "table", run: async () => {
         const tables = AI.textToTable(allText());
         const { meta: sm, content: sc } = newSheet(`${meta?.title || "Document"} — Sheet`, meta?.workspaceId);
         if (tables.length) {

@@ -6,25 +6,25 @@ import Icon from "@react-native-vector-icons/material-design-icons";
 import { AppText } from "@/src/components/app-text";
 import { useTheme } from "@/src/theme";
 
-const CONTENT = `Welcome to Office work. By using this app, you agree to the following terms.
+const CONTENT = `Welcome to Jarvis Office. By using this app, you agree to the following terms.
 
 1. LICENSE
-Office work grants you a personal, non-transferable license to use the app on devices you own or control, for lawful personal or commercial productivity.
+Jarvis Office grants you a personal, non-transferable license to use the app on devices you own or control, for lawful personal or commercial productivity.
 
 2. YOUR CONTENT
-You retain all rights to the documents, spreadsheets, presentations and any content you create. Office work does not claim ownership over your files. Because the app is offline, your content is stored on your device.
+You retain all rights to the documents, spreadsheets, presentations and any content you create. Jarvis Office does not claim ownership over your files. Because the app is offline, your content is stored on your device.
 
 3. ACCEPTABLE USE
 You agree not to use the app to create or store content that is illegal, infringing, abusive, or otherwise violates applicable law. You are responsible for backing up your important files.
 
 4. OFFLINE NATURE
-Office work is designed to work fully offline. Certain optional features (such as import/export via device apps) may rely on other apps installed on your device. Use of those apps is governed by their own terms.
+Jarvis Office is designed to work fully offline. Certain optional features (such as import/export via device apps) may rely on other apps installed on your device. Use of those apps is governed by their own terms.
 
 5. AI FEATURES
 AI features run on your device using deterministic heuristics. AI output may sometimes contain inaccuracies. You are responsible for reviewing AI-generated content before use.
 
 6. NO WARRANTY
-Office work is provided "as is" without warranties of any kind. To the maximum extent permitted by law, we disclaim all implied warranties including merchantability and fitness for a particular purpose.
+Jarvis Office is provided "as is" without warranties of any kind. To the maximum extent permitted by law, we disclaim all implied warranties including merchantability and fitness for a particular purpose.
 
 7. LIMITATION OF LIABILITY
 To the maximum extent permitted by law, we are not liable for indirect, incidental, special, consequential or exemplary damages, or for any loss of data. Please back up your files regularly.

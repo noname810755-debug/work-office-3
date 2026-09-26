@@ -137,7 +137,7 @@ export default function SlidesTools() {
         ]}));
         setPreview({ title: "From Document", text: `${slides.length} slides`, apply: () => commit({ ...content, slides }) });
       }})},
-      { id: "sheet", label: "Sheet → Slides", icon: "google-spreadsheet", run: () => toast.show("Open the sheet and use Sheet → Slides tool", "info") },
+      { id: "sheet", label: "Sheet → Slides", icon: "table", run: () => toast.show("Open the sheet and use Sheet → Slides tool", "info") },
       { id: "pdf", label: "PDF → Slides (paste text)", icon: "file-pdf-box", run: () => setPromptSheet({ title: "Paste PDF text", onSubmit: (p) => {
         const heads = AI.outline(p, 8);
         if (!content) return;

@@ -65,8 +65,14 @@ async function readJSON<T>(key: string, fallback: T): Promise<T> {
   }
 }
 
-async function writeJSON(key: string, value: any) {
-  await AsyncStorage.setItem(key, JSON.stringify(value));
+async function writeJSON(key: string, value: any): Promise<boolean> {
+  try {
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch (error) {
+    console.warn(`[storage] write failed for ${key}`, error);
+    return false;
+  }
 }
 
 export const genId = () => String(uuid.v4());
@@ -118,9 +124,15 @@ export async function restoreFile(id: string) {
 }
 
 export async function purgeFile(id: string) {
-  const ids = await readJSON<string[]>(K.fileIndex, []);
-  await writeJSON(K.fileIndex, ids.filter((x) => x !== id));
-  await AsyncStorage.multiRemove([K.meta(id), K.content(id), K.history(id)]);
+  try {
+    const ids = await readJSON<string[]>(K.fileIndex, []);
+    await writeJSON(K.fileIndex, ids.filter((x) => x !== id));
+    await AsyncStorage.multiRemove([K.meta(id), K.content(id), K.history(id)]);
+    return true;
+  } catch (error) {
+    console.warn("[storage] purge failed", error);
+    return false;
+  }
 }
 
 export async function getHistory(id: string): Promise<{ ts: number; content: any }[]> {

@@ -1,39 +1,30 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "Jarvis Office",
+    "slug": "jarvis-office",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "frontend",
+    "icon": "./assets/images/jarvis-icon.png",
+    "scheme": "jarvisoffice",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.emergent.aiofficelocal.xi7qah"
+      "bundleIdentifier": "com.jarvisai.office"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#000000"
+        "foregroundImage": "./assets/images/jarvis-icon.png",
+        "backgroundColor": "#FFF7F0"
       },
-      "package": "com.emergent.aiofficelocal.xi7qah"
+      "package": "com.jarvisai.office"
     },
     "web": {
       "bundler": "metro",
       "output": "single",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/jarvis-icon.png"
     },
     "plugins": [
       "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-image.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#000000"
-        }
-      ],
       "expo-font",
       "expo-image",
       "expo-secure-store",

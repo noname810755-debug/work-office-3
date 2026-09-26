@@ -62,7 +62,7 @@ export default function Search() {
       </View>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 24, gap: 10 }}>
         {!ready ? <AppText variant="muted">Indexing…</AppText> : q.trim() === "" ? <AppText variant="muted">Type to search across documents, sheets and slides.</AppText> : hits.length === 0 ? <Card><AppText style={{ textAlign: "center" }}>No matches</AppText></Card> : hits.map((h) => {
-          const iconName = h.file.type === "doc" ? "file-document-outline" : h.file.type === "sheet" ? "google-spreadsheet" : "presentation";
+          const iconName = h.file.type === "doc" ? "file-document-outline" : h.file.type === "sheet" ? "table" : "presentation";
           const iconColor = h.file.type === "doc" ? "#FF5E00" : h.file.type === "sheet" ? "#22C55E" : "#7C3AED";
           return (
             <TouchableOpacity key={h.file.id} testID={`hit-${h.file.id}`} onPress={() => router.push(`/${h.file.type === "doc" ? "docs" : h.file.type === "sheet" ? "sheets" : "slides"}/${h.file.id}` as any)}>

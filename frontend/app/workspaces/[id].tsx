@@ -73,14 +73,14 @@ export default function WorkspaceDetail() {
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 24, gap: 12 }}>
         <View style={{ flexDirection: "row", gap: 8 }}>
           <Button title="Doc" icon="file-document-outline" size="sm" kind="secondary" onPress={() => create("doc")} style={{ flex: 1 }} testID="wsd-new-doc" />
-          <Button title="Sheet" icon="google-spreadsheet" size="sm" kind="secondary" onPress={() => create("sheet")} style={{ flex: 1 }} testID="wsd-new-sheet" />
+          <Button title="Sheet" icon="table" size="sm" kind="secondary" onPress={() => create("sheet")} style={{ flex: 1 }} testID="wsd-new-sheet" />
           <Button title="Slide" icon="presentation" size="sm" kind="secondary" onPress={() => create("slide")} style={{ flex: 1 }} testID="wsd-new-slide" />
         </View>
         <Button title="Workspace AI: summarize all documents" icon="robot-outline" onPress={wsAgent} testID="wsd-ai" />
 
         {files.length === 0 ? <Card><AppText style={{ textAlign: "center" }}>No files in this workspace yet.</AppText></Card> :
           files.map((f) => {
-            const iconName = f.type === "doc" ? "file-document-outline" : f.type === "sheet" ? "google-spreadsheet" : "presentation";
+            const iconName = f.type === "doc" ? "file-document-outline" : f.type === "sheet" ? "table" : "presentation";
             const iconColor = f.type === "doc" ? "#FF5E00" : f.type === "sheet" ? "#22C55E" : "#7C3AED";
             return (
               <TouchableOpacity key={f.id} testID={`wsd-file-${f.id}`} onPress={() => router.push(`/${f.type === "doc" ? "docs" : f.type === "sheet" ? "sheets" : "slides"}/${f.id}` as any)}>

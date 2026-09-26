@@ -48,7 +48,7 @@ export function BottomSheet({ visible, onClose, title, children, testID }: {
 }
 
 const styles = StyleSheet.create({
-  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.35)" },
+  backdrop: { ...StyleSheet.absoluteFill, backgroundColor: "rgba(0,0,0,0.35)" },
   sheet: {
     position: "absolute", bottom: 0, left: 0, right: 0,
     borderTopLeftRadius: radius.xxl, borderTopRightRadius: radius.xxl,

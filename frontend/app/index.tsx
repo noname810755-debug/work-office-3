@@ -1,19 +1,21 @@
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity, TextInput, RefreshControl, ScrollView } from "react-native";
+import { View, StyleSheet, TouchableOpacity, TextInput, RefreshControl, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "@react-native-vector-icons/material-design-icons";
 import { AppText } from "@/src/components/app-text";
+import { BrandMark } from "@/src/components/brand-mark";
 import { Card } from "@/src/components/card";
 import { useTheme, spacing, radius } from "@/src/theme";
-import { deleteFile, FileMeta, getSettings, listFiles, listWorkspaces, newDoc, newSheet, newSlide, saveFile, updateMeta, Workspace, purgeFile } from "@/src/storage/db";
+import { deleteFile, FileMeta, listFiles, listWorkspaces, newDoc, newSheet, newSlide, saveFile, updateMeta, Workspace, purgeFile } from "@/src/storage/db";
+import { unreadNotificationCount } from "@/src/notifications/local";
 import { BottomSheet } from "@/src/components/bottom-sheet";
 import { Button } from "@/src/components/button";
 import { useToast } from "@/src/components/toast";
 
 const MODULES = [
   { key: "doc", label: "Docs", icon: "file-document-outline", color: "#FF5E00", desc: "Create, edit and manage documents" },
-  { key: "sheet", label: "Sheets", icon: "google-spreadsheet", color: "#22C55E", desc: "Create, analyze and format spreadsheets" },
+  { key: "sheet", label: "Sheets", icon: "table", color: "#22C55E", desc: "Create, analyze and format spreadsheets" },
   { key: "slide", label: "Slides", icon: "presentation", color: "#7C3AED", desc: "Design presentations and share" },
 ] as const;
 
@@ -29,22 +31,30 @@ export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
   const [tab, setTab] = useState<"all" | "doc" | "sheet" | "slide" | "favorite" | "trash">("all");
   const [longPressed, setLongPressed] = useState<FileMeta | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const load = useCallback(async () => {
-    const [f, w] = await Promise.all([listFiles(), listWorkspaces()]);
-    setFiles(f);
-    setWorkspaces(w);
-  }, []);
+    try {
+      const [f, w, unread] = await Promise.all([listFiles(), listWorkspaces(), unreadNotificationCount()]);
+      setFiles(f);
+      setWorkspaces(w);
+      setUnreadCount(unread);
+    } catch {
+      toast.show("Your local workspace could not be loaded", "error");
+    }
+  }, [toast]);
 
   useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    void load();
+  }, [load]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await load();
-    setRefreshing(false);
+    try {
+      await load();
+    } finally {
+      setRefreshing(false);
+    }
   }, [load]);
 
   const filtered = useMemo(() => {
@@ -61,13 +71,14 @@ export default function Home() {
   }, [files, tab, query]);
 
   const createFile = useCallback(async (type: "doc" | "sheet" | "slide") => {
-    let created;
-    if (type === "doc") created = newDoc();
-    else if (type === "sheet") created = newSheet();
-    else created = newSlide();
-    await saveFile(created.meta, created.content);
-    toast.show("Created", "success");
-    router.push(`/${type === "doc" ? "docs" : type === "sheet" ? "sheets" : "slides"}/${created.meta.id}` as any);
+    try {
+      const created = type === "doc" ? newDoc() : type === "sheet" ? newSheet() : newSlide();
+      await saveFile(created.meta, created.content);
+      toast.show("Created", "success");
+      router.push(`/${type === "doc" ? "docs" : type === "sheet" ? "sheets" : "slides"}/${created.meta.id}` as any);
+    } catch {
+      toast.show("Could not create that file. Try again.", "error");
+    }
   }, [router, toast]);
 
   const recent = files.filter((f) => !f.trashed).slice(0, 6);
@@ -80,13 +91,22 @@ export default function Home() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <View>
-            <AppText variant="muted">Welcome back</AppText>
-            <AppText variant="h1" testID="home-title">Office work</AppText>
+          <View style={styles.brandHeader}>
+            <BrandMark size={42} />
+            <View>
+              <AppText variant="muted">Welcome back</AppText>
+              <AppText variant="h1" testID="home-title">Jarvis Office</AppText>
+            </View>
           </View>
-          <TouchableOpacity onPress={() => router.push("/settings" as any)} testID="settings-button" style={[styles.iconBtn, { backgroundColor: colors.surfaceSecondary }]}>
-            <Icon name="cog-outline" size={22} color={colors.onSurface} />
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            <TouchableOpacity onPress={() => router.push("/notifications" as any)} testID="notifications-button" accessibilityLabel="Notifications" style={[styles.iconBtn, { backgroundColor: colors.surfaceSecondary }]}>
+              <Icon name="bell-outline" size={22} color={colors.onSurface} />
+              {unreadCount > 0 ? <View style={[styles.badge, { backgroundColor: colors.brandPrimary }]}><AppText style={styles.badgeText}>{unreadCount > 9 ? "9+" : unreadCount}</AppText></View> : null}
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/settings" as any)} testID="settings-button" accessibilityLabel="Settings" style={[styles.iconBtn, { backgroundColor: colors.surfaceSecondary }]}>
+              <Icon name="cog-outline" size={22} color={colors.onSurface} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={[styles.search, { backgroundColor: colors.surfaceSecondary, borderColor: colors.border }]}>
@@ -240,7 +260,7 @@ function QuickTile({ label, icon, onPress, testID }: { label: string; icon: stri
 
 function RecentTile({ file, onOpen }: { file: FileMeta; onOpen: () => void }) {
   const { colors } = useTheme();
-  const iconName = file.type === "doc" ? "file-document-outline" : file.type === "sheet" ? "google-spreadsheet" : "presentation";
+  const iconName = file.type === "doc" ? "file-document-outline" : file.type === "sheet" ? "table" : "presentation";
   const iconColor = file.type === "doc" ? "#FF5E00" : file.type === "sheet" ? "#22C55E" : "#7C3AED";
   return (
     <TouchableOpacity onPress={onOpen} testID={`recent-${file.id}`} activeOpacity={0.85} style={[styles.recentTile, { backgroundColor: colors.surfaceSecondary, borderColor: colors.border }]}>
@@ -255,7 +275,7 @@ function RecentTile({ file, onOpen }: { file: FileMeta; onOpen: () => void }) {
 
 function FileRow({ file, workspaces, onOpen, onLongPress }: { file: FileMeta; workspaces: Workspace[]; onOpen: () => void; onLongPress: () => void }) {
   const { colors } = useTheme();
-  const iconName = file.type === "doc" ? "file-document-outline" : file.type === "sheet" ? "google-spreadsheet" : "presentation";
+  const iconName = file.type === "doc" ? "file-document-outline" : file.type === "sheet" ? "table" : "presentation";
   const iconColor = file.type === "doc" ? "#FF5E00" : file.type === "sheet" ? "#22C55E" : "#7C3AED";
   const ws = workspaces.find((w) => w.id === file.workspaceId);
   return (
@@ -281,8 +301,12 @@ function FileRow({ file, workspaces, onOpen, onLongPress }: { file: FileMeta; wo
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: spacing.lg },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", paddingVertical: spacing.md },
-  iconBtn: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: spacing.md },
+  brandHeader: { flexDirection: "row", alignItems: "center", gap: 10, flex: 1 },
+  headerActions: { flexDirection: "row", alignItems: "center", gap: 8 },
+  iconBtn: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center" },
+  badge: { position: "absolute", top: -3, right: -3, minWidth: 17, height: 17, borderRadius: 9, alignItems: "center", justifyContent: "center", paddingHorizontal: 3 },
+  badgeText: { color: "#FFFFFF", fontSize: 9, fontWeight: "700" },
   search: { flexDirection: "row", alignItems: "center", paddingHorizontal: 14, paddingVertical: 10, borderRadius: radius.lg, borderWidth: 1, gap: 8, marginTop: spacing.sm },
   searchInput: { flex: 1, fontSize: 15 },
   offlineBadge: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 8, paddingVertical: 4, borderRadius: radius.pill },
