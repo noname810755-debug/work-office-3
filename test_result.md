@@ -121,11 +121,11 @@ backend:
 frontend:
   - task: "Jarvis Office branding, Home launch, offline notifications, legal Settings links, and UI hardening"
     implemented: true
-    working: true
+    working: "NA"
     file: "frontend/app/index.tsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
@@ -158,3 +158,8 @@ agent_communication:
     message: "Run final verification for production-readiness: verify Expo web preview at localhost:3000 is reachable, root loads Jarvis Office Home directly, no network/backend requests for core flows, FastAPI backend has no new contract changes, check for startup/console/runtime failures, and confirm no user-facing Emergent or Google branding. Do not modify files; report only actionable failures."
   - agent: "testing"
     message: "✅ FINAL VERIFICATION COMPLETE - ALL CHECKS PASSED. Service health confirmed: (1) Expo frontend RUNNING and accessible at localhost:3000 (HTTP 200); (2) Root loads Jarvis Office Home directly with custom BrandMark and 'Jarvis Office' title; (3) App is fully offline - all data stored in AsyncStorage (local device storage), zero network requests in codebase; (4) Backend has expected KeyError for MONGO_URL (not used, app is offline-only as designed); (5) Frontend logs show only 3 expected React Native web compatibility warnings, zero runtime errors; (6) Offline behavior verified - storage uses AsyncStorage, notifications are local-only, no fetch/axios/http calls found in src directory. App is production-ready and fully offline as specified."
+  - agent: "main"
+    message: "Renamed Home create cards and filter tags: Docs -> Document, Sheets -> Spreadsheet, Slides -> Presentation. Retest Home labels and ensure underlying create/filter navigation still routes to docs/sheets/slides."
+  - agent: "testing"
+    message: "✅ HOME UI RENAME VERIFICATION COMPLETE - ALL TESTS PASSED. Comprehensive testing confirmed: (1) Create cards display exactly 'Document', 'Spreadsheet', 'Presentation' (not Docs/Sheets/Slides); (2) Filter tags display 'All', 'Document', 'Spreadsheet', 'Presentation', 'Favorite', 'Trash' with proper capitalization; (3) No old labels (Docs/Sheets/Slides) remain in Home UI; (4) Create cards route correctly to /docs/, /sheets/, /slides/ paths; (5) All filter tags are clickable and filter correctly; (6) Zero runtime errors, only 3 expected React Native web compatibility warnings. UI rename successful, all functionality preserved."
+

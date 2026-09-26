@@ -14,9 +14,9 @@ import { Button } from "@/src/components/button";
 import { useToast } from "@/src/components/toast";
 
 const MODULES = [
-  { key: "doc", label: "Docs", icon: "file-document-outline", color: "#FF5E00", desc: "Create, edit and manage documents" },
-  { key: "sheet", label: "Sheets", icon: "table", color: "#22C55E", desc: "Create, analyze and format spreadsheets" },
-  { key: "slide", label: "Slides", icon: "presentation", color: "#7C3AED", desc: "Design presentations and share" },
+  { key: "doc", label: "Document", icon: "file-document-outline", color: "#FF5E00", desc: "Create, edit and manage documents" },
+  { key: "sheet", label: "Spreadsheet", icon: "table", color: "#22C55E", desc: "Create, analyze and format spreadsheets" },
+  { key: "slide", label: "Presentation", icon: "presentation", color: "#7C3AED", desc: "Design presentations and share" },
 ] as const;
 
 export default function Home() {
@@ -173,7 +173,7 @@ export default function Home() {
               style={[styles.chip, { backgroundColor: tab === t ? colors.brandPrimary : colors.surfaceSecondary, borderColor: colors.border, flexShrink: 0 }]}
             >
               <AppText style={{ color: tab === t ? colors.onBrandPrimary : colors.onSurface, fontSize: 13, fontWeight: "600", textTransform: "capitalize" }}>
-                {t === "all" ? "All" : t === "doc" ? "Docs" : t === "sheet" ? "Sheets" : t === "slide" ? "Slides" : t}
+                {t === "all" ? "All" : t === "doc" ? "Document" : t === "sheet" ? "Spreadsheet" : t === "slide" ? "Presentation" : t}
               </AppText>
             </TouchableOpacity>
           ))}
